@@ -25,7 +25,6 @@ import {
   Check,
   Download,
   Settings,
-  Leaf,
   Menu,
   X,
   ChevronRight,
@@ -65,9 +64,9 @@ function ErrorBox({ message }: { message: string }) {
 }
 function Brand() {
   return (
-    <Link className="brand" to="/">
+    <Link className="brand" to="/" aria-label="Comitadus — Eventos institucionais">
       <span className="brand-icon">
-        <Leaf size={23} />
+        <img src="/comitadus-symbol.png" alt="" width="48" height="48" />
       </span>
       <span>
         comitadus<small>EVENTOS INSTITUCIONAIS</small>
@@ -398,7 +397,9 @@ function Login() {
   return (
     <div className="login-page">
       <div className="login-story">
-        <Brand />
+        <Link to="/" className="team-logo" aria-label="Comitadus — Voltar à agenda">
+          <img src="/comitadus-original.jpeg" alt="Comitadus — Engenharia de Software" />
+        </Link>
         <div>
           <div className="eyebrow">CONECTAR. ORGANIZAR. REALIZAR.</div>
           <h1>
@@ -423,7 +424,7 @@ function Login() {
         </Link>
         <div className="login-inner">
           <span className="brand-icon">
-            <Users />
+            <img src="/comitadus-symbol.png" alt="Logo Comitadus" width="48" height="48" />
           </span>
           <h2>Bem-vindo de volta</h2>
           <p className="muted">Entre com sua conta para acessar o sistema.</p>
