@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: eventos
+      POSTGRES_PASSWORD: eventos_local_demo
+      POSTGRES_DB: eventos
+    ports:
+      - "5432:5432"
+    volumes:
+      - eventos_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eventos -d eventos"]
+      interval: 3s
+      retries: 15
+volumes:
+  eventos_pg:

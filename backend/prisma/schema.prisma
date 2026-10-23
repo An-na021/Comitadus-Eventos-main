@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+enum Role {
+  ADMIN
+  SOLICITANTE
+}
+enum Status {
+  RASCUNHO
+  PENDENTE
+  APROVADO
+  REJEITADO
+  CANCELADO
+}
+model User {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  passwordHash String
+  role Role @default(SOLICITANTE)
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  authored EventRequest[] @relation("Author")
+  reviewed EventRequest[] @relation("Reviewer")
+  sessions Session[]
+  history RequestHistory[]
+}
+model Session {
+  id String @id
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  @@index([expiresAt])
+}
+model CostCenter {
+  id String @id @default(uuid())
+  code String @unique
+  name String
+  active Boolean @default(true)
+  courses Course[]
+  events EventRequest[]
+}
+model Course {
+  id String @id @default(uuid())
+  name String @unique
+  costCenterId String
+  costCenter CostCenter @relation(fields: [costCenterId], references: [id], onDelete: Restrict)
+  active Boolean @default(true)
+  events EventRequest[]
+}
+model Theme {
+  id String @id @default(uuid())
+  name String @unique
+  description String @default("")
+  active Boolean @default(true)
+  events EventRequest[]
+}
+model Environment {
+  id String @id @default(uuid())
+  name String @unique
+  location String @default("")
+  capacity Int @default(0)
+  description String @default("")
+  active Boolean @default(true)
+  resources EnvironmentResource[]
+  events EventRequest[]
+}
+model Resource {
+  id String @id @default(uuid())
+  name String @unique
+  description String @default("")
+  active Boolean @default(true)
+  environments EnvironmentResource[]
+  events EventRequestResource[]
+}
+model EnvironmentResource {
+  environmentId String
+  resourceId String
+  environment Environment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Restrict)
+  @@id([environmentId, resourceId])
+}
+model EventRequest {
+  id String @id @default(uuid())
+  authorUserId String
+  author User @relation("Author", fields: [authorUserId], references: [id], onDelete: Restrict)
+  requesterName String @default("")
+  title String @default("")
+  description String @default("")
+  speaker String @default("")
+  targetAudience String @default("")
+  justification String @default("")
+  objective String @default("")
+  ceremonial Boolean?
+  registration Boolean?
+  declarations Boolean?
+  estimatedAttendees Int?
+  notes String @default("")
+  eventDate DateTime? @db.Date
+  startTime String @default("")
+  endTime String @default("")
+  courseId String?
+  course Course? @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  costCenterId String?
+  costCenter CostCenter? @relation(fields: [costCenterId], references: [id], onDelete: Restrict)
+  themeId String?
+  theme Theme? @relation(fields: [themeId], references: [id], onDelete: Restrict)
+  environmentId String?
+  environment Environment? @relation(fields: [environmentId], references: [id], onDelete: Restrict)
+  resources EventRequestResource[]
+  status Status @default(RASCUNHO)
+  rejectionReason String?
+  reviewedBy String?
+  reviewer User? @relation("Reviewer", fields: [reviewedBy], references: [id], onDelete: Restrict)
+  reviewedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  history RequestHistory[]
+  @@index([authorUserId, status])
+  @@index([environmentId, eventDate, status])
+  @@index([eventDate, status])
+}
+model EventRequestResource {
+  eventRequestId String
+  resourceId String
+  event EventRequest @relation(fields: [eventRequestId], references: [id], onDelete: Cascade)
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Restrict)
+  @@id([eventRequestId, resourceId])
+}
+model RequestHistory {
+  id String @id @default(uuid())
+  requestId String
+  request EventRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  actorUserId String
+  actor User @relation(fields: [actorUserId], references: [id], onDelete: Restrict)
+  action String
+  previousStatus Status?
+  newStatus Status
+  details Json?
+  createdAt DateTime @default(now())
+  @@index([requestId, createdAt])
+}
