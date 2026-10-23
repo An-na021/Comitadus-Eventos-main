@@ -1,6 +1,42 @@
-# Comitadus · Eventos institucionais
 
-Sistema de gestão de eventos com React, Node.js e PostgreSQL.
+# Comitadus — Sistema de Gestão de Eventos Institucionais
+
+O **Comitadus** é uma plataforma web desenvolvida para centralizar, organizar e acompanhar a realização de eventos institucionais da **Univille — Campus São Bento do Sul**.
+
+O sistema permite que a comunidade consulte a agenda pública de eventos, pesquise por títulos e temas, visualize a programação em formato de lista ou calendário e acesse informações detalhadas sobre cada evento.
+
+Usuários autenticados podem criar solicitações de eventos, salvar rascunhos, editar informações, selecionar temas, cursos, ambientes e recursos disponíveis, além de acompanhar o andamento de cada solicitação.
+
+A plataforma possui um fluxo de aprovação com os status:
+
+- Rascunho;
+- Pendente;
+- Aprovado;
+- Rejeitado;
+- Cancelado.
+
+Cada solicitação possui um histórico das ações realizadas e pode incluir justificativas em casos de rejeição ou cancelamento.
+
+Administradores possuem recursos adicionais para:
+
+- Analisar, aprovar ou rejeitar solicitações;
+- Gerenciar usuários;
+- Gerenciar cursos e coordenações;
+- Cadastrar temas de eventos;
+- Gerenciar ambientes e recursos disponíveis;
+- Administrar centros de custo;
+- Consultar relatórios;
+- Filtrar informações por período, status, curso, ambiente e tema;
+- Exportar dados em formato CSV.
+
+A aplicação foi desenvolvida utilizando:
+
+- React;
+- TypeScript;
+- Node.js;
+- PostgreSQL.
+
+O sistema também conta com autenticação de usuários, controle de permissões, validação de dados, proteção de rotas e uma interface responsiva e acessível.
 
 ## Requisitos
 
@@ -70,3 +106,8 @@ npm run dev
 Para encerrar, pressione **Ctrl+C** nos dois terminais. Os dados ficam salvos em `.postgres/`.
 
 Se o PowerShell bloquear `npm.ps1`, substitua `npm` por `npm.cmd` nos comandos. Se uma porta estiver ocupada, encerre a execução anterior antes de iniciar novamente.
+
+
+## Apoio no desenvolvimento
+
+Algumas etapas do desenvolvimento contaram com o auxílio do ChatGPT, utilizado como ferramenta complementar para resolução de dúvidas técnicas, sugestão de melhorias, revisão de código e elaboração da documentação. A implementação, validação e decisões finais foram realizadas pela equipe do projeto.
