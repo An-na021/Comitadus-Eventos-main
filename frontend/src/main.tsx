@@ -33,7 +33,9 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { api, send, statuses, date } from './api';
+import { ThemeToggle } from './components/ThemeToggle';
 import './style.css';
+import './dark.css';
 const Auth = createContext<any>(null);
 const Toast = createContext<(s: string, error?: boolean) => void>(() => {});
 function Badge({ status }: { status: string }) {
@@ -169,6 +171,7 @@ function PublicAgenda() {
         <Brand />
         <nav>
           <span className="nav-active">Agenda de eventos</span>
+          <ThemeToggle />
           <Link className="button small secondary" to={user ? '/app' : '/login'}>
             {user ? 'Meu painel' : 'Acesso ao sistema'}
             <ArrowUpRight size={16} />
@@ -418,6 +421,9 @@ function Login() {
         <small>UNIVILLE · CAMPUS SÃO BENTO DO SUL</small>
       </div>
       <main className="login-form">
+        <div className="login-theme">
+          <ThemeToggle />
+        </div>
         <Link to="/" className="back">
           <ArrowLeft size={17} />
           Voltar para a agenda
@@ -538,13 +544,16 @@ function Shell() {
           <span>
             Univille <ChevronRight size={14} /> Gestão de eventos
           </span>
-          <span className="header-date">
-            {new Date().toLocaleDateString('pt-BR', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
-          </span>
+          <div className="header-actions">
+            <span className="header-date">
+              {new Date().toLocaleDateString('pt-BR', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              })}
+            </span>
+            <ThemeToggle />
+          </div>
         </header>
         <main>
           <Routes>
@@ -1506,23 +1515,31 @@ function Catalogs() {
                         >
                           Editar
                         </button>
-                        {kind !== 'users' && (
+                        {(kind !== 'users' || r.role === 'SOLICITANTE') && (
                           <button
                             className="text-link danger-text"
+                            disabled={busy}
                             onClick={async () => {
                               if (
                                 !window.confirm(
-                                  'Excluir este cadastro? Vínculos existentes impedem a exclusão.'
+                                  kind === 'users'
+                                    ? `Excluir permanentemente o solicitante "${r.name}"? O acesso será removido. Solicitações ou histórico vinculados impedem a exclusão.`
+                                    : 'Excluir este cadastro? Vínculos existentes impedem a exclusão.'
                                 )
                               )
                                 return;
+                              setBusy(true);
                               try {
                                 await api('/admin/' + kind + '/' + r.id, send('DELETE'));
                                 reload();
                                 reloadCatalogs();
-                                notify('Cadastro excluído.');
+                                notify(
+                                  kind === 'users' ? 'Solicitante excluído.' : 'Cadastro excluído.'
+                                );
                               } catch (e: any) {
                                 notify(e.message, true);
+                              } finally {
+                                setBusy(false);
                               }
                             }}
                           >

@@ -496,6 +496,32 @@ for (const action of ['submit', 'approve', 'reject', 'cancel'])
     })
   );
 app.use('/api/admin', admin);
+app.delete(
+  '/api/admin/users/:id',
+  wrap(async (req, res) => {
+    const id = z.string().uuid().parse(req.params.id);
+    await db.$transaction(async (tx) => {
+      await lock(tx);
+      const user = await tx.user.findUnique({ where: { id } });
+      if (!user) fail(404, 'Usuário não encontrado.');
+      if (user!.role !== 'SOLICITANTE')
+        fail(403, 'Somente usuários solicitantes podem ser excluídos.');
+      const [requests, decisions, historyEntries] = await Promise.all([
+        tx.eventRequest.count({ where: { authorUserId: id } }),
+        tx.eventRequest.count({ where: { reviewedBy: id } }),
+        tx.requestHistory.count({ where: { actorUserId: id } }),
+      ]);
+      if (requests || decisions || historyEntries)
+        fail(
+          409,
+          'Este solicitante possui solicitações ou histórico vinculado e não pode ser excluído. Use Editar para desativar o acesso e preservar os registros.'
+        );
+      // Sessions are removed by the database's ON DELETE CASCADE constraint.
+      await tx.user.delete({ where: { id } });
+    });
+    res.json({ ok: true });
+  })
+);
 const catalogSchemas: Record<string, z.ZodTypeAny> = {
   'cost-centers': z
     .object({

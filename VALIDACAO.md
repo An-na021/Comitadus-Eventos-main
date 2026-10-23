@@ -2,7 +2,8 @@
 
 - Migração versionada aplicada com sucesso em PostgreSQL local real, nos bancos `eventos` e `eventos_test`.
 - Seed fictício executado: três usuários, três cursos e centros de custo, quatro temas e ambientes, seis recursos e oito eventos.
-- **34 testes automatizados aprovados**: sete de domínio e 27 de integração com PostgreSQL.
+- **38 testes automatizados aprovados**: sete de domínio e 31 de integração com PostgreSQL.
+- Exclusão de solicitantes: administrador pode excluir contas ativas ou inativas sem vínculos; as sessões são removidas. Visitantes e solicitantes não podem excluir usuários. Contas administrativas e solicitantes com solicitações ou histórico vinculados são preservados; nesses casos, a interface orienta a desativação.
 - Testes verificam perfis, autoria, rascunhos incompletos, envio, restrições de edição, aprovação, rejeição, reenvio, cancelamentos, publicação, recursos por ambiente, centro de custo, CRUDs, CSV, inativação, CSRF e integridade referencial.
 - Concorrência: duas aprovações simultâneas para o mesmo ambiente/intervalo retornaram uma aprovação e um conflito; não houve reserva dupla.
 - Defesa no banco: tentativa de forçar sobreposição diretamente pelo Prisma foi rejeitada pela restrição PostgreSQL.

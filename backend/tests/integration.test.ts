@@ -287,6 +287,50 @@ describe('Fluxos reais com PostgreSQL', () => {
       ).status
     ).toBe(409);
   });
+  it.each([true, false])('exclui solicitante ativo=%s e revoga suas sessões', async (active) => {
+    const user = await db.user.create({
+      data: {
+        name: prefix + 'Excluir',
+        email: `${prefix}excluir-${active}@test.invalid`,
+        passwordHash: users[1].passwordHash,
+        role: 'SOLICITANTE',
+      },
+    });
+    users.push(user);
+    const session = request.agent(app);
+    expect(
+      (
+        await session.post('/api/auth/login').send({
+          email: user.email,
+          password: 'Integration123!',
+        })
+      ).status
+    ).toBe(200);
+    if (!active) await db.user.update({ where: { id: user.id }, data: { active: false } });
+    expect((await request(app).delete('/api/admin/users/' + user.id)).status).toBe(401);
+    expect((await owner.delete('/api/admin/users/' + user.id)).status).toBe(403);
+    expect((await admin.delete('/api/admin/users/' + user.id)).status).toBe(200);
+    expect(await db.user.findUnique({ where: { id: user.id } })).toBeNull();
+    expect(await db.session.count({ where: { userId: user.id } })).toBe(0);
+    expect((await session.get('/api/auth/me')).status).toBe(401);
+  });
+  it('bloqueia exclusão de administrador e de solicitante com registros vinculados', async () => {
+    expect((await admin.delete('/api/admin/users/' + users[0].id)).status).toBe(403);
+    const before = await db.eventRequest.count({ where: { authorUserId: users[1].id } });
+    expect(before).toBeGreaterThan(0);
+    const result = await admin.delete('/api/admin/users/' + users[1].id);
+    expect(result.status).toBe(409);
+    expect(result.body.message).toContain('desativar');
+    expect(await db.user.findUnique({ where: { id: users[1].id } })).not.toBeNull();
+    expect(await db.eventRequest.count({ where: { authorUserId: users[1].id } })).toBe(before);
+    expect((await owner.get('/api/auth/me')).status).toBe(200);
+  });
+  it('responde adequadamente para usuário ausente e identificador inválido', async () => {
+    expect(
+      (await admin.delete('/api/admin/users/00000000-0000-4000-8000-000000000000')).status
+    ).toBe(404);
+    expect((await admin.delete('/api/admin/users/invalido')).status).toBe(422);
+  });
   it('restrição do banco bloqueia sobreposição mesmo sem passar pela API', async () => {
     const e = await draft(base);
     await expect(
