@@ -12,6 +12,7 @@
     "noEmit": true
   },
   "include": [
+    "api",
     "frontend/src",
     "backend/src",
     "backend/prisma",

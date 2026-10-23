@@ -40,6 +40,8 @@ O sistema também conta com autenticação de usuários, controle de permissões
 
 ## Requisitos
 
+Para publicar pelo GitHub na Vercel e transferir o banco atual, siga [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md).
+
 - Node.js 22.21 ou superior na série 22, com npm 10 ou superior.
 - Internet para a primeira instalação.
 
