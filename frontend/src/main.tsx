@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { api, send, statuses, date } from './api';
 import { ThemeToggle } from './components/ThemeToggle';
+import './fonts.css';
 import './style.css';
 import './dark.css';
 const Auth = createContext<any>(null);
@@ -167,8 +168,26 @@ function PublicAgenda() {
   );
   return (
     <div className="public">
-      <header className="public-header">
-        <Brand />
+      <header className="public-header public-header-institutional">
+        <div className="public-brands">
+          <Brand />
+          <div className="institution-logo" role="img" aria-label="Univille — 60 anos, 1965 a 2025">
+            <img
+              className="institution-logo-light"
+              src="/branding/univille-60-original.png"
+              alt=""
+              width="1920"
+              height="1080"
+            />
+            <img
+              className="institution-logo-dark"
+              src="/branding/univille-60-negativo.png"
+              alt=""
+              width="1920"
+              height="1080"
+            />
+          </div>
+        </div>
         <nav>
           <span className="nav-active">Agenda de eventos</span>
           <ThemeToggle />
@@ -400,10 +419,7 @@ function Login() {
   return (
     <div className="login-page">
       <div className="login-story">
-        <Link to="/" className="team-logo" aria-label="Comitadus — Voltar à agenda">
-          <img src="/comitadus-original.jpeg" alt="Comitadus — Engenharia de Software" />
-        </Link>
-        <div>
+        <div className="login-story-copy">
           <div className="eyebrow">CONECTAR. ORGANIZAR. REALIZAR.</div>
           <h1>
             Grandes encontros
@@ -429,9 +445,14 @@ function Login() {
           Voltar para a agenda
         </Link>
         <div className="login-inner">
-          <span className="brand-icon">
-            <img src="/comitadus-symbol.png" alt="Logo Comitadus" width="48" height="48" />
-          </span>
+          <div className="login-degree-logo">
+            <img
+              src="/branding/univille-graduacao-transparente.png"
+              alt="Graduação Univille"
+              width="2087"
+              height="753"
+            />
+          </div>
           <h2>Bem-vindo de volta</h2>
           <p className="muted">Entre com sua conta para acessar o sistema.</p>
           {error && <ErrorBox message={error} />}
@@ -462,8 +483,7 @@ function Login() {
             </button>
           </form>
           <div className="demo-note">
-            Contas de demonstração disponíveis no README do projeto. O acesso é cadastrado pela
-            administração.
+            O acesso é cadastrado pela administração. Entre com sua conta para continuar.
           </div>
         </div>
       </main>

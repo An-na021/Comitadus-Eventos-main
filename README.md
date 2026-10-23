@@ -38,7 +38,6 @@ Aguarde a mensagem **PostgreSQL local ativo** e mantenha esse terminal aberto. A
 
 ```sh
 npm run db:migrate
-npm run db:seed
 npm run dev
 ```
 
@@ -46,15 +45,13 @@ Só avance se o comando anterior concluir sem erro. Deixe esse terminal aberto: 
 
 **5. Acesse [http://127.0.0.1:5173](http://127.0.0.1:5173).**
 
-## Contas de demonstração
+## Dados e acesso
 
-| Perfil | E-mail | Senha |
-| --- | --- | --- |
-| Administrador | admin@demo.test | DemoEventos2026! |
-| Solicitante | ana@demo.test | DemoEventos2026! |
-| Solicitante | bruno@demo.test | DemoEventos2026! |
+Entre com uma conta já cadastrada. Novos usuários são cadastrados pela administração.
 
-O seed cria essas contas e os eventos fictícios no computador em que for executado.
+Os dados existentes permanecem no PostgreSQL local, em `.postgres/`. Não apague essa pasta. Baixar o projeto pelo GitHub em outra máquina não transfere seus dados: para isso, é necessário transferir e restaurar um backup do banco. Um banco novo começa vazio, inclusive sem usuários.
+
+O comando `npm run db:seed` não cria mais registros fictícios. Exemplos só são carregados quando solicitados explicitamente com `npm run db:seed:demo`.
 
 ## Próximas execuções
 

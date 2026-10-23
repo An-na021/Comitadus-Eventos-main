@@ -80,6 +80,9 @@ app.post(
     limit: 40,
     standardHeaders: 'draft-7',
     legacyHeaders: false,
+    message: {
+      message: 'Muitas tentativas de acesso. Aguarde alguns minutos antes de tentar novamente.',
+    },
   }),
   wrap(async (req, res) => {
     const data = z
@@ -710,6 +713,13 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
       .status(422)
       .json({ message: err.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join(' ') });
   if (err instanceof AppError) return res.status(err.status).json({ message: err.message });
+  if (err instanceof Prisma.PrismaClientInitializationError)
+    return res
+      .status(503)
+      .json({
+        message:
+          'Banco de dados indisponível. Inicie o PostgreSQL com npm run db:local e tente novamente.',
+      });
   if (
     err instanceof Prisma.PrismaClientUnknownRequestError &&
     /violates RESTRICT|violates foreign key|exclusion constraint/.test(err.message)

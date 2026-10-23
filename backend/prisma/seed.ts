@@ -1,6 +1,12 @@
 import { db } from '../src/db.js';
 import bcrypt from 'bcryptjs';
 async function main() {
+  if (!process.argv.includes('--demo')) {
+    console.log(
+      'Nenhum dado de demonstração foi criado. Para carregar exemplos explicitamente, use npm run db:seed:demo.'
+    );
+    return;
+  }
   const passwordHash = await bcrypt.hash('DemoEventos2026!', 12);
   const users = [];
   for (const [email, name, role] of [
